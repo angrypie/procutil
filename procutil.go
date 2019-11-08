@@ -23,7 +23,8 @@ func Terminate(proc *os.Process, timeout ...time.Duration) error {
 	case <-time.After(duration):
 		return proc.Kill()
 	case err := <-done:
-		if err != nil {
+		//Kill if sigterm returns error or process just still alive
+		if err != nil || proc.Signal(syscall.Signal(0)) == nil {
 			return proc.Kill()
 		}
 	}
